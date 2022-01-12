@@ -1,0 +1,33 @@
+<beans:beans
+        xmlns="http://www.springframework.org/schema/security"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <http authentication-manager-ref="dao-auth" auto-config="true" use-expressions="false">
+        <intercept-url pattern="/" access="ROLE_ANONYMOUS, ROLE_ADMIN, ROLE_USER" />
+        <intercept-url pattern="/users" access="ROLE_ADMIN, ROLE_USER"/>
+
+        <form-login login-page="/showLoginPage"
+                    login-processing-url="/authenticateTheUser"
+                    authentication-failure-url="/showLoginPage?error=1"
+                    username-parameter="username" password-parameter="password"/>
+
+        <logout logout-success-url="/"  />
+    </http>
+
+    <beans:bean id="userDetailsService"
+                class="com.ita.u1.ssecurity.config.UserDetailsServiceImpl" />
+
+    <authentication-manager id="dao-auth">
+        <authentication-provider user-service-ref="userDetailsService">
+        </authentication-provider>
+    </authentication-manager>
+
+    <beans:bean id="webSecurityExpressionHandler"
+                class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />
+
+</beans:beans>
